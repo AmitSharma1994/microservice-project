@@ -241,6 +241,7 @@ curl http://localhost:8080/api/products
 
 ### Task 3: Place an Order (Saga Pattern)
 
+
 ```bash
 # Create an order
 curl -X POST http://localhost:8080/api/orders \
