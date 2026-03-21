@@ -1,0 +1,187 @@
+# ==========================================
+# Maven
+# ==========================================
+target/
+!.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
+*.jar
+*.war
+*.ear
+*.class
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+dependency-reduced-pom.xml
+buildNumber.properties
+.mvn/timing.properties
+.mvn/wrapper/maven-wrapper.properties
+
+# ==========================================
+# Spring Boot
+# ==========================================
+application-local.yml
+application-local.properties
+application-secret.yml
+application-secret.properties
+
+# ==========================================
+# IntelliJ IDEA
+# ==========================================
+.idea/
+*.iws
+*.iml
+*.ipr
+out/
+.idea_modules/
+
+# ==========================================
+# Eclipse
+# ==========================================
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+bin/
+!**/src/main/**/bin/
+!**/src/test/**/bin/
+
+# ==========================================
+# VS Code
+# ==========================================
+.vscode/
+
+# ==========================================
+# NetBeans
+# ==========================================
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+build/
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+# ==========================================
+# OS Files
+# ==========================================
+# Windows
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+*.stackdump
+[Dd]esktop.ini
+$RECYCLE.BIN/
+*.cab
+*.msi
+*.msix
+*.msm
+*.msp
+*.lnk
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+.AppleDB
+.AppleDesktop
+Network Trash Folder
+Temporary Items
+.apdisk
+
+# Linux
+*~
+.fuse_hidden*
+.directory
+.Trash-*
+.nfs*
+
+# ==========================================
+# Docker
+# ==========================================
+.docker/
+docker-compose.override.yml
+
+# ==========================================
+# Kubernetes / Helm
+# ==========================================
+*.kubeconfig
+kubeconfig
+*.tfstate
+*.tfstate.backup
+.terraform/
+.terraform.lock.hcl
+
+# ==========================================
+# Logs
+# ==========================================
+logs/
+*.log
+*.log.*
+log/
+
+# ==========================================
+# Environment & Secrets
+# ==========================================
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.jks
+*.keystore
+*.truststore
+secrets/
+secret/
+
+# ==========================================
+# Jenkins
+# ==========================================
+.jenkins/
+workspace/
+
+# ==========================================
+# Test Reports
+# ==========================================
+/test-results/
+/surefire-reports/
+/jacoco/
+*.exec
+
+# ==========================================
+# Node / Frontend (if any)
+# ==========================================
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# ==========================================
+# Temporary Files
+# ==========================================
+*.tmp
+*.bak
+*.swp
+*.swo
+*~
+.cache/
+tmp/
+temp/
+
