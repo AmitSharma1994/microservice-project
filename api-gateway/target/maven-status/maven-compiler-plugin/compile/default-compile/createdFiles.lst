@@ -1,0 +1,5 @@
+com\microservice\gateway\filter\JwtAuthenticationFilter.class
+com\microservice\gateway\ApiGatewayApplication.class
+com\microservice\gateway\util\JwtUtil.class
+com\microservice\gateway\config\GatewayConfig.class
+com\microservice\gateway\exception\GlobalExceptionHandler.class

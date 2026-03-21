@@ -1,0 +1,5 @@
+D:\WSMicroservice\microservice-project\api-gateway\src\main\java\com\microservice\gateway\ApiGatewayApplication.java
+D:\WSMicroservice\microservice-project\api-gateway\src\main\java\com\microservice\gateway\config\GatewayConfig.java
+D:\WSMicroservice\microservice-project\api-gateway\src\main\java\com\microservice\gateway\util\JwtUtil.java
+D:\WSMicroservice\microservice-project\api-gateway\src\main\java\com\microservice\gateway\exception\GlobalExceptionHandler.java
+D:\WSMicroservice\microservice-project\api-gateway\src\main\java\com\microservice\gateway\filter\JwtAuthenticationFilter.java

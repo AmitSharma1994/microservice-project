@@ -546,6 +546,98 @@ spec:
           type: Utilization
           averageUtilization: 70
 ---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: notification-service
+  namespace: microservices
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: notification-service
+  template:
+    metadata:
+      labels:
+        app: notification-service
+    spec:
+      containers:
+        - name: notification-service
+          image: REPLACE_IN_CI/notification-service:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8084
+          env:
+            - name: SPRING_CONFIG_IMPORT
+              value: optional:configserver:http://config-server:8888
+            - name: EUREKA_DEFAULT_ZONE
+              valueFrom:
+                configMapKeyRef:
+                  name: platform-config
+                  key: EUREKA_DEFAULT_ZONE
+            - name: ZIPKIN_ENDPOINT
+              valueFrom:
+                configMapKeyRef:
+                  name: platform-config
+                  key: ZIPKIN_ENDPOINT
+            - name: KAFKA_BOOTSTRAP_SERVERS
+              valueFrom:
+                configMapKeyRef:
+                  name: platform-config
+                  key: KAFKA_BOOTSTRAP_SERVERS
+          readinessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8084
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8084
+            initialDelaySeconds: 50
+            periodSeconds: 20
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: notification-service
+  namespace: microservices
+spec:
+  selector:
+    app: notification-service
+  ports:
+    - name: http
+      port: 8084
+      targetPort: 8084
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: notification-service-hpa
+  namespace: microservices
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: notification-service
+  minReplicas: 1
+  maxReplicas: 4
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 70
+---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:

@@ -18,7 +18,7 @@ pipeline {
     EKS_CLUSTER_NAME = 'microservices-eks'
     K8S_NAMESPACE = 'microservices'
     ECR_REGISTRY = 'YOUR_AWS_ACCOUNT_ID.dkr.ecr.ap-south-1.amazonaws.com'
-    SERVICES = 'config-server eureka-server api-gateway user-service product-service order-service'
+    SERVICES = 'config-server eureka-server api-gateway user-service product-service order-service notification-service'
     EFFECTIVE_TAG = "${params.IMAGE_TAG ?: env.BUILD_NUMBER}"
   }
 

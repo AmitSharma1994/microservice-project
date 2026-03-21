@@ -1,29 +1,51 @@
-# Microservices Project - File Generation Script
-# This script lists all files that have been created and those that need to be created
+# Microservices Project - Setup Status Script
+# Shows the current state of all services and how to run them
 
-Write-Host "=== Spring Boot Microservices Project Setup ===" -ForegroundColor Green
 Write-Host ""
-Write-Host "Project Structure Created:" -ForegroundColor Cyan
-Write-Host "✓ Parent POM" -ForegroundColor Green
-Write-Host "✓ Docker Compose" -ForegroundColor Green
-Write-Host "✓ Config Server (Complete)" -ForegroundColor Green
-Write-Host "✓ Eureka Server (Complete)" -ForegroundColor Green
-Write-Host "✓ API Gateway (Complete with JWT)" -ForegroundColor Green
-Write-Host "✓ User Service (Complete with Auth)" -ForegroundColor Green
-Write-Host "⚙ Product Service (In Progress)" -ForegroundColor Yellow
-Write-Host "⚙ Order Service (Pending)" -ForegroundColor Yellow
-Write-Host "⚙ Notification Service (Pending)" -ForegroundColor Yellow
+Write-Host "=============================================" -ForegroundColor Cyan
+Write-Host "   Spring Boot Microservices - Setup Status" -ForegroundColor Cyan
+Write-Host "=============================================" -ForegroundColor Cyan
 Write-Host ""
-Write-Host "Next Steps:" -ForegroundColor Cyan
-Write-Host "1. Complete Product Service files"
-Write-Host "2. Create Order Service with Saga pattern"
-Write-Host "3. Create Notification Service with Factory pattern"
-Write-Host "4. Add UML diagrams"
-Write-Host "5. Build and test all services"
+Write-Host "Services Status:" -ForegroundColor Yellow
+Write-Host "  ✅ Parent POM                      (Complete)" -ForegroundColor Green
+Write-Host "  ✅ Docker Compose                   (Complete)" -ForegroundColor Green
+Write-Host "  ✅ Config Server       :8888         (Complete)" -ForegroundColor Green
+Write-Host "  ✅ Eureka Server       :8761         (Complete)" -ForegroundColor Green
+Write-Host "  ✅ API Gateway         :8080         (Complete - JWT Auth)" -ForegroundColor Green
+Write-Host "  ✅ User Service        :8081         (Complete - Auth/CRUD)" -ForegroundColor Green
+Write-Host "  ✅ Product Service     :8083         (Complete - Redis/Kafka)" -ForegroundColor Green
+Write-Host "  ✅ Order Service       :8082         (Complete - Saga/Strategy)" -ForegroundColor Green
+Write-Host "  ✅ Notification Service :8084        (Complete - Factory/Kafka)" -ForegroundColor Green
 Write-Host ""
-Write-Host "To build all services, run:" -ForegroundColor Yellow
-Write-Host "mvn clean install" -ForegroundColor White
+Write-Host "Infrastructure:" -ForegroundColor Yellow
+Write-Host "  ✅ MySQL (user_db)     :3306" -ForegroundColor Green
+Write-Host "  ✅ MySQL (order_db)    :3307" -ForegroundColor Green
+Write-Host "  ✅ MySQL (product_db)  :3308" -ForegroundColor Green
+Write-Host "  ✅ Redis               :6379" -ForegroundColor Green
+Write-Host "  ✅ Kafka               :9092" -ForegroundColor Green
+Write-Host "  ✅ Zookeeper           :2181" -ForegroundColor Green
+Write-Host "  ✅ Zipkin              :9411" -ForegroundColor Green
 Write-Host ""
-Write-Host "To start infrastructure:" -ForegroundColor Yellow
-Write-Host "docker-compose up -d mysql-user mysql-order mysql-product redis kafka zookeeper zipkin" -ForegroundColor White
+Write-Host "Deployment:" -ForegroundColor Yellow
+Write-Host "  ✅ Jenkinsfile         (CI/CD Pipeline)" -ForegroundColor Green
+Write-Host "  ✅ EKS Manifests       (K8s Deployments/Services/HPA/Ingress)" -ForegroundColor Green
+Write-Host ""
+Write-Host "=============================================" -ForegroundColor Cyan
+Write-Host "   How to Run Locally" -ForegroundColor Cyan
+Write-Host "=============================================" -ForegroundColor Cyan
+Write-Host ""
+Write-Host "  Option 1 - One command:" -ForegroundColor Yellow
+Write-Host "    .\start-local.ps1" -ForegroundColor White
+Write-Host ""
+Write-Host "  Option 2 - Manual steps:" -ForegroundColor Yellow
+Write-Host "    mvn clean package -DskipTests" -ForegroundColor White
+Write-Host "    docker-compose up --build -d" -ForegroundColor White
+Write-Host ""
+Write-Host "  Test APIs:" -ForegroundColor Yellow
+Write-Host "    .\test-apis.ps1" -ForegroundColor White
+Write-Host ""
+Write-Host "  Stop everything:" -ForegroundColor Yellow
+Write-Host "    .\stop-local.ps1" -ForegroundColor White
+Write-Host "=============================================" -ForegroundColor Cyan
+Write-Host ""
 

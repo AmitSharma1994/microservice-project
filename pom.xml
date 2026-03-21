@@ -20,6 +20,7 @@
         <module>user-service</module>
         <module>order-service</module>
         <module>product-service</module>
+        <module>notification-service</module>
     </modules>
 
     <properties>
@@ -112,6 +113,13 @@
                             </exclude>
                         </excludes>
                     </configuration>
+                    <executions>
+                        <execution>
+                            <goals>
+                                <goal>repackage</goal>
+                            </goals>
+                        </execution>
+                    </executions>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -120,6 +128,9 @@
                     <configuration>
                         <source>17</source>
                         <target>17</target>
+                        <compilerArgs>
+                            <arg>-parameters</arg>
+                        </compilerArgs>
                         <annotationProcessorPaths>
                             <path>
                                 <groupId>org.projectlombok</groupId>

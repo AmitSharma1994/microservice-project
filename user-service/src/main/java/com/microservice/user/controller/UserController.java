@@ -46,7 +46,7 @@ public class UserController {
 
     @GetMapping("/{id}")
     @Operation(summary = "Get user by ID")
-    public ResponseEntity<UserResponse> getUserById(@PathVariable Long id) {
+    public ResponseEntity<UserResponse> getUserById(@PathVariable("id") Long id) {
         log.info("GET /api/users/{}", id);
         UserResponse response = userService.getUserById(id);
         return ResponseEntity.ok(response);
@@ -54,7 +54,7 @@ public class UserController {
 
     @GetMapping("/username/{username}")
     @Operation(summary = "Get user by username")
-    public ResponseEntity<UserResponse> getUserByUsername(@PathVariable String username) {
+    public ResponseEntity<UserResponse> getUserByUsername(@PathVariable("username") String username) {
         log.info("GET /api/users/username/{}", username);
         UserResponse response = userService.getUserByUsername(username);
         return ResponseEntity.ok(response);
@@ -70,7 +70,7 @@ public class UserController {
 
     @DeleteMapping("/{id}")
     @Operation(summary = "Delete user by ID")
-    public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteUser(@PathVariable("id") Long id) {
         log.info("DELETE /api/users/{}", id);
         userService.deleteUser(id);
         return ResponseEntity.noContent().build();

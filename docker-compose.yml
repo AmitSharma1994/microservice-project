@@ -71,6 +71,8 @@ services:
     container_name: redis
     ports:
       - "6379:6379"
+    volumes:
+      - redis-data:/data
     networks:
       - microservice-network
     healthcheck:
@@ -160,6 +162,8 @@ services:
     environment:
       - SPRING_PROFILES_ACTIVE=docker
       - CONFIG_SERVER_URL=http://config-server:8888
+      - EUREKA_HOSTNAME=eureka-server
+      - EUREKA_DEFAULT_ZONE=http://eureka-server:8761/eureka/
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8761/actuator/health"]
       timeout: 10s
@@ -182,7 +186,10 @@ services:
     environment:
       - SPRING_PROFILES_ACTIVE=docker
       - CONFIG_SERVER_URL=http://config-server:8888
-      - EUREKA_SERVER_URL=http://eureka-server:8761/eureka
+      - EUREKA_DEFAULT_ZONE=http://eureka-server:8761/eureka/
+      - EUREKA_DASHBOARD_URL=http://eureka-server:8761
+      - ZIPKIN_ENDPOINT=http://zipkin:9411/api/v2/spans
+      - JWT_SECRET=404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
       timeout: 10s
@@ -208,11 +215,12 @@ services:
     environment:
       - SPRING_PROFILES_ACTIVE=docker
       - CONFIG_SERVER_URL=http://config-server:8888
-      - EUREKA_SERVER_URL=http://eureka-server:8761/eureka
-      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql-user:3306/user_db
-      - SPRING_DATASOURCE_USERNAME=userservice
-      - SPRING_DATASOURCE_PASSWORD=userservice123
-      - ZIPKIN_BASE_URL=http://zipkin:9411
+      - EUREKA_DEFAULT_ZONE=http://eureka-server:8761/eureka/
+      - USER_DB_URL=jdbc:mysql://mysql-user:3306/user_db
+      - USER_DB_USERNAME=userservice
+      - USER_DB_PASSWORD=userservice123
+      - ZIPKIN_ENDPOINT=http://zipkin:9411/api/v2/spans
+      - JWT_SECRET=404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970
 
   # Product Service
   product-service:
@@ -238,13 +246,19 @@ services:
     environment:
       - SPRING_PROFILES_ACTIVE=docker
       - CONFIG_SERVER_URL=http://config-server:8888
-      - EUREKA_SERVER_URL=http://eureka-server:8761/eureka
-      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql-product:3306/product_db
-      - SPRING_DATASOURCE_USERNAME=productservice
-      - SPRING_DATASOURCE_PASSWORD=productservice123
+      - EUREKA_DEFAULT_ZONE=http://eureka-server:8761/eureka/
+      - PRODUCT_DB_URL=jdbc:mysql://mysql-product:3306/product_db
+      - PRODUCT_DB_USERNAME=productservice
+      - PRODUCT_DB_PASSWORD=productservice123
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - SPRING_DATA_REDIS_HOST=redis
+      - SPRING_DATA_REDIS_PORT=6379
       - SPRING_REDIS_HOST=redis
+      - SPRING_REDIS_PORT=6379
+      - KAFKA_BOOTSTRAP_SERVERS=kafka:29092
       - SPRING_KAFKA_BOOTSTRAP_SERVERS=kafka:29092
-      - ZIPKIN_BASE_URL=http://zipkin:9411
+      - ZIPKIN_ENDPOINT=http://zipkin:9411/api/v2/spans
 
   # Order Service
   order-service:
@@ -272,12 +286,12 @@ services:
     environment:
       - SPRING_PROFILES_ACTIVE=docker
       - CONFIG_SERVER_URL=http://config-server:8888
-      - EUREKA_SERVER_URL=http://eureka-server:8761/eureka
-      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql-order:3306/order_db
-      - SPRING_DATASOURCE_USERNAME=orderservice
-      - SPRING_DATASOURCE_PASSWORD=orderservice123
-      - SPRING_KAFKA_BOOTSTRAP_SERVERS=kafka:29092
-      - ZIPKIN_BASE_URL=http://zipkin:9411
+      - EUREKA_DEFAULT_ZONE=http://eureka-server:8761/eureka/
+      - ORDER_DB_URL=jdbc:mysql://mysql-order:3306/order_db
+      - ORDER_DB_USERNAME=orderservice
+      - ORDER_DB_PASSWORD=orderservice123
+      - KAFKA_BOOTSTRAP_SERVERS=kafka:29092
+      - ZIPKIN_ENDPOINT=http://zipkin:9411/api/v2/spans
 
   # Notification Service
   notification-service:
@@ -299,9 +313,14 @@ services:
     environment:
       - SPRING_PROFILES_ACTIVE=docker
       - CONFIG_SERVER_URL=http://config-server:8888
-      - EUREKA_SERVER_URL=http://eureka-server:8761/eureka
-      - SPRING_KAFKA_BOOTSTRAP_SERVERS=kafka:29092
-      - ZIPKIN_BASE_URL=http://zipkin:9411
+      - EUREKA_DEFAULT_ZONE=http://eureka-server:8761/eureka/
+      - KAFKA_BOOTSTRAP_SERVERS=kafka:29092
+      - ZIPKIN_ENDPOINT=http://zipkin:9411/api/v2/spans
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8084/actuator/health"]
+      timeout: 10s
+      retries: 5
+      start_period: 40s
 
 networks:
   microservice-network:
@@ -311,4 +330,5 @@ volumes:
   mysql-user-data:
   mysql-order-data:
   mysql-product-data:
+  redis-data:
 
