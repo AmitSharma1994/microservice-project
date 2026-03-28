@@ -1,0 +1,24 @@
+# terraform.tfvars.example
+# ─────────────────────────────────────────────────────────
+# COPY this file to terraform.tfvars and fill in real values.
+# NEVER commit terraform.tfvars to Git — it is in .gitignore
+# ─────────────────────────────────────────────────────────
+
+aws_region       = "ap-south-1"
+project_name     = "microservices"
+eks_cluster_name = "microservices-eks"
+
+# Strong passwords — minimum 8 chars, mix of letters/numbers/symbols
+user_db_password    = "CHANGE_ME_UserDB@Prod2024"
+order_db_password   = "CHANGE_ME_OrderDB@Prod2024"
+product_db_password = "CHANGE_ME_ProductDB@Prod2024"
+
+# 64-char hex secret for JWT
+# Generated with: python -c "import secrets; print(secrets.token_hex(32))"
+# ⚠️  Generate your OWN value — never share or reuse this example secret.
+# Use any method below to regenerate:
+#   Windows PowerShell : -join ((1..32) | ForEach-Object { '{0:x2}' -f (Get-Random -Max 256) })
+#   Python             : python -c "import secrets; print(secrets.token_hex(32))"
+#   Git Bash / Linux   : openssl rand -hex 32
+jwt_secret = "e4f45a141ffa83064791c2dbf8fde998c386df0467459554a6279ce7667ddaf4"
+

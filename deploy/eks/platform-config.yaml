@@ -1,27 +1,68 @@
+# platform-config.yaml
+# ─────────────────────────────────────────────────────────────────────────────
+# QUICK FILL:  Run the helper script to auto-populate all placeholders:
+#   cd D:\WSMicroservice\microservice-project\deploy
+#   .\update-platform-config.ps1
+#
+# MANUAL FILL: Replace every REPLACE_WITH_* value using `terraform output`:
+#   cd deploy/terraform && terraform output
+#
+# Apply to cluster ONCE (or after any change):
+#   kubectl apply -f deploy/eks/platform-config.yaml
+# ─────────────────────────────────────────────────────────────────────────────
+
 apiVersion: v1
 kind: Namespace
 metadata:
   name: microservices
+  labels:
+    project: microservices
+    environment: production
 ---
+# ── Non-sensitive configuration ───────────────────────────────────────────────
 apiVersion: v1
 kind: ConfigMap
 metadata:
   name: platform-config
   namespace: microservices
 data:
+  # Eureka Service Discovery (runs inside EKS cluster)
   EUREKA_DEFAULT_ZONE: "http://eureka-server:8761/eureka/"
   EUREKA_DASHBOARD_URL: "http://eureka-server:8761"
+
+  # Distributed Tracing
   ZIPKIN_ENDPOINT: "http://zipkin.monitoring:9411/api/v2/spans"
-  KAFKA_BOOTSTRAP_SERVERS: "b-1.kafka.your-domain.amazonaws.com:9092"
-  REDIS_HOST: "redis-cluster.your-domain.cache.amazonaws.com"
+
+  # Amazon MSK (Kafka) — get from: terraform output kafka_bootstrap_brokers
+  # Run: cd deploy/terraform && terraform output kafka_bootstrap_brokers
+  # Format: b-1.microservices-kafka.XXXX.kafka.ap-south-1.amazonaws.com:9092,b-2.XXXX...
+  KAFKA_BOOTSTRAP_SERVERS: "REPLACE_WITH_MSK_BOOTSTRAP_BROKERS"
+
+  # Amazon ElastiCache (Redis) — get from: terraform output redis_primary_endpoint
+  # Run: cd deploy/terraform && terraform output redis_primary_endpoint
+  # Format: microservices-redis.XXXX.ng.0001.aps1.cache.amazonaws.com
+  REDIS_HOST: "REPLACE_WITH_ELASTICACHE_PRIMARY_ENDPOINT"
   REDIS_PORT: "6379"
-  USER_DB_URL: "jdbc:mysql://user-db.your-domain.rds.amazonaws.com:3306/user_db"
+
+  # Amazon RDS — User Service — get from: terraform output user_db_endpoint
+  # Run: cd deploy/terraform && terraform output user_db_endpoint
+  # Format: jdbc:mysql://microservices-user-db.XXXX.ap-south-1.rds.amazonaws.com:3306/user_db
+  USER_DB_URL: "REPLACE_WITH_USER_RDS_JDBC_URL"
   USER_DB_USERNAME: "userservice"
-  ORDER_DB_URL: "jdbc:mysql://order-db.your-domain.rds.amazonaws.com:3306/order_db"
+
+  # Amazon RDS — Order Service — get from: terraform output order_db_endpoint
+  # Run: cd deploy/terraform && terraform output order_db_endpoint
+  ORDER_DB_URL: "REPLACE_WITH_ORDER_RDS_JDBC_URL"
   ORDER_DB_USERNAME: "orderservice"
-  PRODUCT_DB_URL: "jdbc:mysql://product-db.your-domain.rds.amazonaws.com:3306/product_db"
+
+  # Amazon RDS — Product Service — get from: terraform output product_db_endpoint
+  # Run: cd deploy/terraform && terraform output product_db_endpoint
+  PRODUCT_DB_URL: "REPLACE_WITH_PRODUCT_RDS_JDBC_URL"
   PRODUCT_DB_USERNAME: "productservice"
 ---
+# ── Sensitive configuration ───────────────────────────────────────────────────
+# NOTE: For production, migrate to AWS Secrets Manager + External Secrets Operator
+# See: https://external-secrets.io/latest/provider/aws-secrets-manager/
 apiVersion: v1
 kind: Secret
 metadata:
@@ -29,8 +70,11 @@ metadata:
   namespace: microservices
 type: Opaque
 stringData:
-  USER_DB_PASSWORD: "replace-me"
-  ORDER_DB_PASSWORD: "replace-me"
-  PRODUCT_DB_PASSWORD: "replace-me"
-  JWT_SECRET: "replace-me-with-strong-hex-or-base64"
+  # Must match the passwords used in terraform.tfvars during `terraform apply`
+  USER_DB_PASSWORD: "UserDB@Prod2026!Secure"
+  ORDER_DB_PASSWORD: "OrderDB@Prod2026!Secure"
+  PRODUCT_DB_PASSWORD: "ProductDB@Prod2026!Secure"
+
+  # JWT signing secret — generated with: openssl rand -hex 32
+  JWT_SECRET: "5ef87580cce51b97ba7f9c74b0e6fb12d7e8ff0f6eb42d044a043b9a6b681e6f"
 
