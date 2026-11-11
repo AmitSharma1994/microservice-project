@@ -1,52 +1,74 @@
-# EKS Deployment and Jenkins CI/CD
+# EKS Deployment — Kubernetes Manifests
 
-This folder contains Kubernetes manifests used by the root `Jenkinsfile` to deploy services to Amazon EKS.
+This folder contains Kubernetes manifests used by the root `Jenkinsfile` to deploy all microservices to Amazon EKS.
 
-## Included files
+> 📖 **Full step-by-step guide:** See [`AWS_DEPLOYMENT_GUIDE.md`](../../AWS_DEPLOYMENT_GUIDE.md) in the project root.
 
-- `platform-config.yaml`: namespace, shared non-secret config (`ConfigMap`), and initial secret template (`Secret`).
-- `microservices.yaml`: `Deployment`, `Service`, `HorizontalPodAutoscaler`, and ALB `Ingress` resources.
+---
 
-## Services covered
+## Files in this folder
 
-- `config-server`
-- `eureka-server`
-- `api-gateway`
-- `user-service`
-- `product-service`
-- `order-service`
+| File | Purpose |
+|------|---------|
+| `platform-config.yaml` | Namespace + ConfigMap (non-sensitive config) + Secret template |
+| `microservices.yaml` | Deployments, Services, HPAs, ALB Ingress for all 7 services |
 
-## Prerequisites
+## Services deployed
 
-- EKS cluster and worker nodes are ready.
-- AWS Load Balancer Controller is installed in the cluster.
-- ECR repositories exist for each service.
-- Jenkins node has Docker, AWS CLI, and kubectl installed.
-- Jenkins credential `aws-jenkins-creds` exists (AWS access key and secret).
+| Service | Replicas | Port |
+|---------|----------|------|
+| `config-server` | 1 | 8888 |
+| `eureka-server` | 1 | 8761 |
+| `api-gateway` | 2 | 8080 |
+| `user-service` | 2 | 8081 |
+| `product-service` | 2 | 8083 |
+| `order-service` | 2 | 8082 |
+| `notification-service` | 1 | 8084 |
 
-## Required updates before first deployment
-
-1. In `platform-config.yaml`, replace placeholder endpoints with your real:
-   - RDS hosts
-   - Redis endpoint
-   - Kafka bootstrap servers
-   - Zipkin endpoint
-2. Replace placeholder secret values in `platform-config.yaml`.
-3. In root `Jenkinsfile`, set:
-   - `AWS_REGION`
-   - `EKS_CLUSTER_NAME`
-   - `ECR_REGISTRY`
-
-## Manual deployment (optional)
+## Quick start (manual deployment)
 
 ```bash
+# 1. Connect kubectl to your EKS cluster
+aws eks update-kubeconfig --region ap-south-1 --name microservices-eks
+
+# 2. Fill in platform-config.yaml placeholders, then apply
 kubectl apply -f deploy/eks/platform-config.yaml
-kubectl apply -f deploy/eks/microservices.yaml
+
+# 3. Replace REPLACE_IN_CI with your ECR base URL, then apply workloads
+sed 's|REPLACE_IN_CI|YOUR_ACCOUNT_ID.dkr.ecr.ap-south-1.amazonaws.com/microservices|g' \
+  deploy/eks/microservices.yaml | kubectl apply -f -
+
+# 4. Watch pods come up
+kubectl -n microservices get pods -w
 ```
+
+## Placeholders to replace in platform-config.yaml
+
+Get values from `terraform output` after running `deploy/terraform/`:
+
+- `REPLACE_WITH_MSK_BOOTSTRAP_BROKERS`
+- `REPLACE_WITH_ELASTICACHE_PRIMARY_ENDPOINT`
+- `REPLACE_WITH_USER_RDS_JDBC_URL`
+- `REPLACE_WITH_ORDER_RDS_JDBC_URL`
+- `REPLACE_WITH_PRODUCT_RDS_JDBC_URL`
+- `REPLACE_WITH_USER_DB_PASSWORD`
+- `REPLACE_WITH_ORDER_DB_PASSWORD`
+- `REPLACE_WITH_PRODUCT_DB_PASSWORD`
+- `REPLACE_WITH_JWT_SECRET_64_CHAR_HEX`
+
+Also update the Ingress host in `microservices.yaml`:
+- `api.microservices.example.com` → your actual domain
+
+## Infrastructure prerequisites
+
+- EKS cluster running (provisioned by `deploy/terraform/main.tf`)
+- AWS Load Balancer Controller installed in the cluster
+- ECR repositories created (provisioned by Terraform)
+- Metrics Server installed (for HPA auto-scaling)
+- Jenkins EC2 with AWS CLI + kubectl + Docker installed
 
 ## Notes
 
-- Ingress host is `api.microservices.example.com`; update it to your domain.
-- Current secrets are plain Kubernetes Secret values for bootstrap only.
-- For production, prefer AWS Secrets Manager + External Secrets Operator.
-
+- For production secrets, use **AWS Secrets Manager + External Secrets Operator**
+  instead of plain Kubernetes Secrets.
+  See: https://external-secrets.io/latest/provider/aws-secrets-manager/
